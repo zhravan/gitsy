@@ -1,9 +1,6 @@
-import { Button } from "@/components/atoms/button"
-import React from "react"
 import { Index } from "./pages/Index"
 
 function App() {
-  const [count, setCount] = React.useState(0)
 
   return (
     <div className="min-h-screen bg-white grid place-items-center mx-auto py-8">

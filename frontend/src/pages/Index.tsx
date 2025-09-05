@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+// import React, { useEffect, useState } from "react";
 import { AuthForm } from '../components/templates/AuthForm';
 
 export const Index = () => {
