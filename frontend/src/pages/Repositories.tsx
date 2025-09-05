@@ -92,7 +92,7 @@ const Repositories = () => {
                 </div>
             </div>
 
-            <div className={`grid gap-4 transition-opacity duration-300 ${isLoading ? 'opacity-50' : 'opacity-100'}`}>
+            <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 transition-opacity duration-300 ${isLoading ? 'opacity-50' : 'opacity-100'}`}>
                 {repositories
                     .filter((r) => {
                         if (!query.trim()) return true;
@@ -104,22 +104,28 @@ const Repositories = () => {
                         );
                     })
                     .map((repo) => (
-                    <Card key={repo.id} className="hover:shadow-md transition-shadow">
+                    <Card key={repo.id} className="hover:shadow-md transition-shadow h-full">
                         <CardHeader className="pb-3">
                             <div className="flex items-start justify-between">
-                                <div className="flex-1">
-                                    <CardTitle className="text-lg">
-                                        <Link
-                                            to={`/repository/${repo.full_name}`}
-                                            className="text-accent hover:underline"
-                                        >
-                                            {repo.name}
-                                        </Link>
-                                        {repo.private && (
-                                            <Lock className="inline ml-2 h-4 w-4 text-muted-foreground" />
-                                        )}
+                                <div className="flex-1 min-w-0">
+                                    <CardTitle className="text-lg overflow-hidden min-w-0">
+                                        <div className="flex items-center gap-2 overflow-hidden min-w-0">
+                                            <Link
+                                                to={`/repository/${repo.full_name}`}
+                                                className="text-accent hover:underline truncate block max-w-full flex-1 min-w-0"
+                                                title={repo.full_name}
+                                            >
+                                                {repo.name}
+                                            </Link>
+                                            {repo.private && (
+                                                <Lock className="shrink-0 h-4 w-4 text-muted-foreground" />
+                                            )}
+                                        </div>
                                     </CardTitle>
-                                    <CardDescription className="mt-1">
+                                    <CardDescription
+                                        className="mt-1 line-clamp-2"
+                                        title={repo.description || 'No description provided'}
+                                    >
                                         {repo.description || 'No description provided'}
                                     </CardDescription>
                                 </div>
@@ -127,7 +133,7 @@ const Repositories = () => {
                         </CardHeader>
                         <CardContent>
                             <div className="flex items-center justify-between">
-                                <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                                <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                                     {repo.language && (
                                         <div className="flex items-center">
                                             <div className="w-3 h-3 rounded-full bg-accent mr-2"></div>
@@ -159,7 +165,7 @@ const Repositories = () => {
                 </div>
             )}
             {repositories.length === 0 && isLoading && (
-                <div className="grid gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     {[...Array(6)].map((_, i) => (
                         <Card key={i} className="animate-pulse">
                             <CardHeader>
