@@ -7,6 +7,7 @@ import { Input } from "../atoms/input";
 import { Label } from "../atoms/label";
 import { Alert, AlertDescription } from "../atoms/alert";
 import githubService from "@/lib/github-service";
+import * as Runtime from "../../../wailsjs/runtime";
 
 
 export const AuthForm = ({ onSuccess }: { onSuccess: () => void }) => {
@@ -25,6 +26,7 @@ export const AuthForm = ({ onSuccess }: { onSuccess: () => void }) => {
             githubService.setToken(token);
             //check if the token is valid
             await githubService.getCurrentUser();
+            onSuccess();
         } catch (error) {
             setError('Invalid GitHub token. Please check your token and try again.');
             githubService.clearToken();
@@ -85,6 +87,12 @@ export const AuthForm = ({ onSuccess }: { onSuccess: () => void }) => {
                             href="https://github.com/settings/tokens/new?scopes=repo,user&description=GitClient"
                             target="_blank"
                             rel="noopener noreferrer"
+                            onClick={(e) => {
+                                if ((window as any)?.runtime) {
+                                    e.preventDefault();
+                                    Runtime.BrowserOpenURL("https://github.com/settings/tokens/new?scopes=repo,user&description=GitClient");
+                                }
+                            }}
                             className="inline-flex items-center text-sm text-accent hover:underline"
                         >
                             Create one on GitHub

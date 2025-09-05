@@ -17,6 +17,9 @@ export default {
       }
     },
     extend: {
+      fontFamily: {
+        brand: ['Sora', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
