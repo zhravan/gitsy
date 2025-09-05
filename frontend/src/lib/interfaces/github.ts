@@ -23,4 +23,4 @@ interface Repository {
   default_branch: string;
 }
 
-export type { GitHubUser, Repository };
+export type { GitHubUser as User, Repository };

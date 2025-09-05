@@ -1,5 +1,6 @@
 import { Index } from "./pages/Index"
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Repositories from "./pages/Repositories";
 
 function App() {
 
@@ -7,7 +8,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Index />} />
-        <Route path="/repositories" element={<Index />} />
+        <Route path="/repositories" element={<Repositories />} />
       </Routes>
     </BrowserRouter>
 

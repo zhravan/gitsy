@@ -1,4 +1,4 @@
-import { GitHubUser } from "./interfaces/github";
+import { User, Repository } from "./interfaces/github";
 
 class GithubService {
   private baseUrl: string;
@@ -38,8 +38,12 @@ class GithubService {
     return response.json();
   }
 
-  async getCurrentUser(): Promise<GitHubUser> {
-    return this.request<GitHubUser>("/user");
+  async getCurrentUser(): Promise<User> {
+    return this.request<User>("/user");
+  }
+
+  async getRepositories(): Promise<Repository[]> {
+    return this.request<Repository[]>("/user/repos");
   }
 }
 
