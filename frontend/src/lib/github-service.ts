@@ -27,7 +27,17 @@ class GithubService {
     return !!this.token;
   }
 
-  private async request<T>(endpoint: string): Promise<T> {
+  private async request<T>(endpoint: string): Promise<T>;
+
+  private async request<T>(
+    endpoint: string,
+    options: { includeResponse: true }
+  ): Promise<{ data: T; response: Response }>;
+
+  private async request<T>(
+    endpoint: string,
+    options?: { includeResponse?: boolean }
+  ): Promise<T | { data: T; response: Response }> {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       headers: {
         Authorization: this.token ? `Bearer ${this.token}` : "",
@@ -57,7 +67,11 @@ class GithubService {
       throw new Error(errorMessage);
     }
 
-    return response.json();
+    const json = (await response.json()) as T;
+    if (options?.includeResponse) {
+      return { data: json, response };
+    }
+    return json;
   }
 
   async getCurrentUser(): Promise<User> {
@@ -69,6 +83,29 @@ class GithubService {
   async getRepositories(username?: string): Promise<Repository[]> {
     const endpoint = username ? `/users/${username}/repos` : "/user/repos";
     return this.request<Repository[]>(`${endpoint}?sort=updated&per_page=50`);
+  }
+
+  async getRepositoriesPaged(options?: {
+    username?: string;
+    page?: number;
+    perPage?: number;
+  }): Promise<{
+    items: Repository[];
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+  }> {
+    const username = options?.username;
+    const page = options?.page ?? 1;
+    const perPage = options?.perPage ?? 20;
+    const endpoint = username ? `/users/${username}/repos` : "/user/repos";
+    const { data: items, response } = await this.request<Repository[]>(
+      `${endpoint}?sort=updated&per_page=${perPage}&page=${page}`,
+      { includeResponse: true }
+    );
+    const link = response.headers.get("Link") || response.headers.get("link");
+    const hasNextPage = !!(link && link.includes('rel="next"'));
+    const hasPrevPage = page > 1;
+    return { items, hasNextPage, hasPrevPage };
   }
 
   setUser(user: User) {
@@ -114,6 +151,10 @@ try {
   INITIAL_USER = null;
 }
 
-export const githubService = new GithubService(BASE_URL, INITIAL_TOKEN, INITIAL_USER);
+export const githubService = new GithubService(
+  BASE_URL,
+  INITIAL_TOKEN,
+  INITIAL_USER
+);
 export { GithubService };
 export default githubService;

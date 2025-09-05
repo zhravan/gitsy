@@ -5,17 +5,23 @@ import { Clock, GitFork, Lock, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { formatDistanceToNow } from 'date-fns';
+import { Button } from "@/components/atoms/button";
 
 const Repositories = () => {
     const [repositories, setRepositories] = useState<Repository[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>('');
+    const [page, setPage] = useState(1);
+    const [hasNextPage, setHasNextPage] = useState(false);
 
     useEffect(() => {
         const fetchRepositories = async () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setIsLoading(true);
             try {
-                const repositories = await githubService.getRepositories();
-                setRepositories(repositories);
+                const { items, hasNextPage } = await githubService.getRepositoriesPaged({ page, perPage: 20 });
+                setRepositories(items);
+                setHasNextPage(hasNextPage);
             } catch (error) {
                 setError('Failed to fetch repositories');
             } finally {
@@ -23,28 +29,7 @@ const Repositories = () => {
             }
         };
         fetchRepositories();
-    }, []);
-
-    if (isLoading) {
-        return (
-            <div className="space-y-4">
-                <h1 className="text-2xl font-bold">Your Repositories</h1>
-                <div className="grid gap-4">
-                    {[...Array(6)].map((_, i) => (
-                        <Card key={i} className="animate-pulse">
-                            <CardHeader>
-                                <div className="h-4 bg-secondary rounded w-3/4"></div>
-                                <div className="h-3 bg-secondary rounded w-1/2"></div>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="h-3 bg-secondary rounded w-full"></div>
-                            </CardContent>
-                        </Card>
-                    ))}
-                </div>
-            </div>
-        )
-    }
+    }, [page]);
 
     if (error) {
         return (
@@ -57,10 +42,34 @@ const Repositories = () => {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-bold">Your Repositories</h1>
-                <p className="text-muted-foreground">{repositories.length} repositories</p>
+                <div className="flex items-center space-x-2">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPage((p) => Math.max(1, p - 1))}
+                        disabled={page === 1 || isLoading}
+                    >
+                        Previous
+                    </Button>
+                    <span className="text-sm text-muted-foreground">Page {page}</span>
+                    {isLoading && (
+                        <span className="inline-flex items-center" aria-live="polite" aria-busy="true">
+                            <span className="h-4 w-4 animate-spin border-2 border-muted-foreground border-t-transparent rounded-full" />
+                            <span className="sr-only">Loading</span>
+                        </span>
+                    )}
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPage((p) => p + 1)}
+                        disabled={!hasNextPage || isLoading}
+                    >
+                        Next
+                    </Button>
+                </div>
             </div>
 
-            <div className="grid gap-4">
+            <div className={`grid gap-4 transition-opacity duration-300 ${isLoading ? 'opacity-50' : 'opacity-100'}`}>
                 {repositories.map((repo) => (
                     <Card key={repo.id} className="hover:shadow-md transition-shadow">
                         <CardHeader className="pb-3">
@@ -111,9 +120,24 @@ const Repositories = () => {
                 ))}
             </div>
 
-            {repositories.length === 0 && (
+            {repositories.length === 0 && !isLoading && (
                 <div className="text-center py-12">
                     <p className="text-muted-foreground">No repositories found</p>
+                </div>
+            )}
+            {repositories.length === 0 && isLoading && (
+                <div className="grid gap-4">
+                    {[...Array(6)].map((_, i) => (
+                        <Card key={i} className="animate-pulse">
+                            <CardHeader>
+                                <div className="h-4 bg-secondary rounded w-3/4"></div>
+                                <div className="h-3 bg-secondary rounded w-1/2"></div>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="h-3 bg-secondary rounded w-full"></div>
+                            </CardContent>
+                        </Card>
+                    ))}
                 </div>
             )}
         </div>
