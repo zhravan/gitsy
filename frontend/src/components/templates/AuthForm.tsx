@@ -6,19 +6,32 @@ import { Button } from "../atoms/button";
 import { Input } from "../atoms/input";
 import { Label } from "../atoms/label";
 import { Alert, AlertDescription } from "../atoms/alert";
+import githubService from "@/lib/github-service";
 
 
-export const AuthForm = () => {
+export const AuthForm = ({ onSuccess }: { onSuccess: () => void }) => {
 
     const [token, setToken] = useState<string>("");
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>('');
 
-
-    const handleSubmit = () => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
         setIsLoading(true);
-        setError(null);
+        setError("");
         setToken("");
+
+        try {
+            githubService.setToken(token);
+            //check if the token is valid
+            await githubService.getCurrentUser();
+        } catch (error) {
+            setError('Invalid GitHub token. Please check your token and try again.');
+            githubService.clearToken();
+        } finally {
+            setIsLoading(false);
+        }
+
     }
 
     useEffect(() => {
