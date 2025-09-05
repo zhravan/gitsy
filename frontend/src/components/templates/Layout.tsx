@@ -22,7 +22,7 @@ const Layout = () => {
                     <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-6">
                             <Link to="/" className="flex items-center space-x-2">
-                                <img src={logo} alt="Gitsy logo" className="h-6 w-6" />
+                                <img src={logo} alt="Gitsy logo" className="h-6 w-6 shrink-0 object-contain dark:invert md:dark:invert-0" />
                                 <span className="text-lg font-semibold font-brand">Gitsy</span>
                             </Link>
 

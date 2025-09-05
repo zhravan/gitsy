@@ -63,7 +63,7 @@ const Repositories = () => {
                     </form>
                     {totalRepos !== null && (
                         <span className="text-sm text-muted-foreground">
-                            Total {totalRepos} repos · Page {page}{totalRepos ? ` / ${Math.max(1, Math.ceil(totalRepos / perPage))}` : ''}
+                            {totalRepos} repos · Page {page}{totalRepos ? ` of ${Math.max(1, Math.ceil(totalRepos / perPage))}` : ''}
                         </span>
                     )}
                     <Button
@@ -74,7 +74,7 @@ const Repositories = () => {
                     >
                         Previous
                     </Button>
-                    <span className="text-sm text-muted-foreground">Page {page}</span>
+
                     {isLoading && (
                         <span className="inline-flex items-center" aria-live="polite" aria-busy="true">
                             <span className="h-4 w-4 animate-spin border-2 border-muted-foreground border-t-transparent rounded-full" />
@@ -104,59 +104,59 @@ const Repositories = () => {
                         );
                     })
                     .map((repo) => (
-                    <Card key={repo.id} className="hover:shadow-md transition-shadow h-full">
-                        <CardHeader className="pb-3">
-                            <div className="flex items-start justify-between">
-                                <div className="flex-1 min-w-0">
-                                    <CardTitle className="text-lg overflow-hidden min-w-0">
-                                        <div className="flex items-center gap-2 overflow-hidden min-w-0">
-                                            <Link
-                                                to={`/repository/${repo.full_name}`}
-                                                className="text-accent hover:underline truncate block max-w-full flex-1 min-w-0"
-                                                title={repo.full_name}
-                                            >
-                                                {repo.name}
-                                            </Link>
-                                            {repo.private && (
-                                                <Lock className="shrink-0 h-4 w-4 text-muted-foreground" />
-                                            )}
-                                        </div>
-                                    </CardTitle>
-                                    <CardDescription
-                                        className="mt-1 line-clamp-2"
-                                        title={repo.description || 'No description provided'}
-                                    >
-                                        {repo.description || 'No description provided'}
-                                    </CardDescription>
+                        <Card key={repo.id} className="hover:shadow-md transition-shadow h-full">
+                            <CardHeader className="pb-3">
+                                <div className="flex items-start justify-between">
+                                    <div className="flex-1 min-w-0">
+                                        <CardTitle className="text-lg overflow-hidden min-w-0">
+                                            <div className="flex items-center gap-2 overflow-hidden min-w-0">
+                                                <Link
+                                                    to={`/repository/${repo.full_name}`}
+                                                    className="text-accent hover:underline truncate block max-w-full flex-1 min-w-0"
+                                                    title={repo.full_name}
+                                                >
+                                                    {repo.name}
+                                                </Link>
+                                                {repo.private && (
+                                                    <Lock className="shrink-0 h-4 w-4 text-muted-foreground" />
+                                                )}
+                                            </div>
+                                        </CardTitle>
+                                        <CardDescription
+                                            className="mt-1 line-clamp-2"
+                                            title={repo.description || 'No description provided'}
+                                        >
+                                            {repo.description || 'No description provided'}
+                                        </CardDescription>
+                                    </div>
                                 </div>
-                            </div>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="flex items-center justify-between">
-                                <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                                    {repo.language && (
+                            </CardHeader>
+                            <CardContent>
+                                <div className="flex items-center justify-between">
+                                    <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+                                        {repo.language && (
+                                            <div className="flex items-center">
+                                                <div className="w-3 h-3 rounded-full bg-accent mr-2"></div>
+                                                {repo.language}
+                                            </div>
+                                        )}
                                         <div className="flex items-center">
-                                            <div className="w-3 h-3 rounded-full bg-accent mr-2"></div>
-                                            {repo.language}
+                                            <Star className="h-4 w-4 mr-1" />
+                                            {repo.stargazers_count}
                                         </div>
-                                    )}
-                                    <div className="flex items-center">
-                                        <Star className="h-4 w-4 mr-1" />
-                                        {repo.stargazers_count}
-                                    </div>
-                                    <div className="flex items-center">
-                                        <GitFork className="h-4 w-4 mr-1" />
-                                        {repo.forks_count}
-                                    </div>
-                                    <div className="flex items-center">
-                                        <Clock className="h-4 w-4 mr-1" />
-                                        Updated {formatDistanceToNow(new Date(repo.updated_at), { addSuffix: true })}
+                                        <div className="flex items-center">
+                                            <GitFork className="h-4 w-4 mr-1" />
+                                            {repo.forks_count}
+                                        </div>
+                                        <div className="flex items-center">
+                                            <Clock className="h-4 w-4 mr-1" />
+                                            Updated {formatDistanceToNow(new Date(repo.updated_at), { addSuffix: true })}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                ))}
+                            </CardContent>
+                        </Card>
+                    ))}
             </div>
 
             {repositories.length === 0 && !isLoading && (
