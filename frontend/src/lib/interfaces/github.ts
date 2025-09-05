@@ -5,6 +5,7 @@ interface GitHubUser {
   name: string;
   bio: string;
   public_repos: number;
+  total_private_repos?: number;
   followers: number;
   following: number;
 }

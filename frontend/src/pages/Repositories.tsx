@@ -1,11 +1,12 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/atoms/cards";
 import githubService from "@/lib/github-service";
-import { Repository } from "@/lib/interfaces/github";
+import { Repository, User } from "@/lib/interfaces/github";
 import { Clock, GitFork, Lock, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { formatDistanceToNow } from 'date-fns';
 import { Button } from "@/components/atoms/button";
+import { Input } from "@/components/atoms/input";
 
 const Repositories = () => {
     const [repositories, setRepositories] = useState<Repository[]>([]);
@@ -13,13 +14,21 @@ const Repositories = () => {
     const [error, setError] = useState<string | null>('');
     const [page, setPage] = useState(1);
     const [hasNextPage, setHasNextPage] = useState(false);
+    const [perPage] = useState(20);
+    const [totalRepos, setTotalRepos] = useState<number | null>(null);
+    const [query, setQuery] = useState("");
 
     useEffect(() => {
         const fetchRepositories = async () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
             setIsLoading(true);
             try {
-                const { items, hasNextPage } = await githubService.getRepositoriesPaged({ page, perPage: 20 });
+                const currentUser: User | null = githubService.getUser();
+                if (currentUser) {
+                    const total = (currentUser.public_repos ?? 0) + (currentUser.total_private_repos ?? 0);
+                    setTotalRepos(total);
+                }
+                const { items, hasNextPage } = await githubService.getRepositoriesPaged({ page, perPage });
                 setRepositories(items);
                 setHasNextPage(hasNextPage);
             } catch (error) {
@@ -42,7 +51,21 @@ const Repositories = () => {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-bold">Your Repositories</h1>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-4">
+                    <form onSubmit={(e) => e.preventDefault()} className="relative">
+                        <Input
+                            type="text"
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            placeholder="Filter repositories..."
+                            className="w-64"
+                        />
+                    </form>
+                    {totalRepos !== null && (
+                        <span className="text-sm text-muted-foreground">
+                            Total {totalRepos} repos · Page {page}{totalRepos ? ` / ${Math.max(1, Math.ceil(totalRepos / perPage))}` : ''}
+                        </span>
+                    )}
                     <Button
                         variant="outline"
                         size="sm"
@@ -70,7 +93,17 @@ const Repositories = () => {
             </div>
 
             <div className={`grid gap-4 transition-opacity duration-300 ${isLoading ? 'opacity-50' : 'opacity-100'}`}>
-                {repositories.map((repo) => (
+                {repositories
+                    .filter((r) => {
+                        if (!query.trim()) return true;
+                        const q = query.toLowerCase();
+                        return (
+                            r.name.toLowerCase().includes(q) ||
+                            (r.description?.toLowerCase().includes(q) ?? false) ||
+                            r.full_name.toLowerCase().includes(q)
+                        );
+                    })
+                    .map((repo) => (
                     <Card key={repo.id} className="hover:shadow-md transition-shadow">
                         <CardHeader className="pb-3">
                             <div className="flex items-start justify-between">
