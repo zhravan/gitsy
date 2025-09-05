@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import githubService from "@/lib/github-service";
 import { User } from "@/lib/interfaces/github";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/atoms/cards";
+import { useToast } from '@hanseo0507/react-toast'
 
 const Profile = () => {
+    const { toast } = useToast();
     const [user, setUser] = useState<User | null>(githubService.getUser());
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -17,6 +19,7 @@ const Profile = () => {
                     setUser(fresh);
                 } catch (e) {
                     setError("Failed to load profile");
+                    toast.error('Failed to load profile');
                 } finally {
                     setIsLoading(false);
                 }

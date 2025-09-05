@@ -8,10 +8,12 @@ import { Label } from "../atoms/label";
 import { Alert, AlertDescription } from "../atoms/alert";
 import githubService from "@/lib/github-service";
 import * as Runtime from "../../../wailsjs/runtime";
+import { useToast } from '@hanseo0507/react-toast'
 
 
 export const AuthForm = ({ onSuccess }: { onSuccess: () => void }) => {
     console.log("AuthForm", onSuccess);
+    const { toast } = useToast();
     const [token, setToken] = useState<string>("");
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>('');
@@ -29,6 +31,7 @@ export const AuthForm = ({ onSuccess }: { onSuccess: () => void }) => {
             onSuccess();
         } catch (error) {
             setError('Invalid GitHub token. Please check your token and try again.');
+            toast.error('Invalid GitHub token');
             githubService.clearToken();
         } finally {
             setIsLoading(false);

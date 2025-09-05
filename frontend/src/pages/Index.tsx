@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthForm } from '../components/templates/AuthForm';
 import { githubService } from '@/lib/github-service';
+import { useToast } from '@hanseo0507/react-toast'
 
 export const Index = () => {
 
-
-
+  const { toast } = useToast();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
@@ -21,6 +21,7 @@ export const Index = () => {
         } catch (err) {
           githubService.clearToken();
           setIsAuthenticated(false);
+          toast.error('Authentication failed. Please sign in again.');
         }
       }
       setIsLoading(false);
