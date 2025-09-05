@@ -26,6 +26,7 @@ export const AuthForm = ({ onSuccess }: { onSuccess: () => void }) => {
             githubService.setToken(token);
             //check if the token is valid
             await githubService.getCurrentUser();
+            onSuccess();
         } catch (error) {
             setError('Invalid GitHub token. Please check your token and try again.');
             githubService.clearToken();

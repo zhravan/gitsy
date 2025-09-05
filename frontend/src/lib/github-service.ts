@@ -32,7 +32,25 @@ class GithubService {
     });
 
     if (!response.ok) {
-      throw new Error(`GitHub API error: ${response.status}`);
+      let errorMessage = `GitHub API error: ${response.status}`;
+      try {
+        const text = await response.text();
+        if (text) {
+          try {
+            const data = JSON.parse(text);
+            if (data && typeof data.message === "string") {
+              errorMessage = `${errorMessage} - ${data.message}`;
+            } else {
+              errorMessage = `${errorMessage} - ${text}`;
+            }
+          } catch {
+            errorMessage = `${errorMessage} - ${text}`;
+          }
+        }
+      } catch {
+        // ignore parsing errors
+      }
+      throw new Error(errorMessage);
     }
 
     return response.json();
@@ -42,16 +60,21 @@ class GithubService {
     return this.request<User>("/user");
   }
 
-  async getRepositories(): Promise<Repository[]> {
-    return this.request<Repository[]>("/user/repos");
+  async getRepositories(username?: string): Promise<Repository[]> {
+    const endpoint = username ? `/users/${username}/repos` : "/user/repos";
+    return this.request<Repository[]>(`${endpoint}?sort=updated&per_page=50`);
   }
 }
 
 const BASE_URL = "https://api.github.com";
-const INITIAL_TOKEN =
-  typeof window !== "undefined"
-    ? localStorage.getItem("github_token") ?? ""
-    : "";
+let INITIAL_TOKEN = "";
+try {
+  if (typeof window !== "undefined" && window?.localStorage) {
+    INITIAL_TOKEN = localStorage.getItem("github_token") ?? "";
+  }
+} catch {
+  INITIAL_TOKEN = "";
+}
 
 export const githubService = new GithubService(BASE_URL, INITIAL_TOKEN);
 export { GithubService };

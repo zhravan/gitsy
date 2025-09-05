@@ -1,7 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/atoms/cards";
 import githubService from "@/lib/github-service";
 import { Repository } from "@/lib/interfaces/github";
-import { Clock, GitFork, Link, Lock, Star } from "lucide-react";
+import { Clock, GitFork, Lock, Star } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { formatDistanceToNow } from 'date-fns';
 
