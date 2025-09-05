@@ -1,23 +1,13 @@
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "../atoms/button";
 import githubService from "@/lib/github-service";
-import { LogOut, Search } from "lucide-react";
+import { LogOut } from "lucide-react";
 import logo from "@/assets/gitsy.png";
-import { useState } from "react";
-import { Input } from "../atoms/input";
 
 const Layout = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const [searchQuery, setSearchQuery] = useState('');
     const isAuthenticated = githubService.isAuthenticated();
-
-    const handleSearch = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (searchQuery.trim()) {
-            navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
-        }
-    };
 
     const handleLogout = () => {
         githubService.clearToken();
@@ -63,16 +53,6 @@ const Layout = () => {
                         <div className="flex items-center space-x-4">
                             {isAuthenticated && (
                                 <>
-                                    <form onSubmit={handleSearch} className="relative">
-                                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                        <Input
-                                            type="text"
-                                            placeholder="Search repositories..."
-                                            value={searchQuery}
-                                            onChange={(e) => setSearchQuery(e.target.value)}
-                                            className="pl-10 w-64"
-                                        />
-                                    </form>
                                     <Button variant="ghost" size="sm" onClick={handleLogout}>
                                         <LogOut className="h-4 w-4" />
                                     </Button>
