@@ -1,8 +1,11 @@
 <p align="center">
     <img align="center" width="20%" src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/r4bq7ud792tplxeynisr.png" alt="logo"/>
-    <h1 align="center">gitsy</h1>
-    <h6 align="center"> anti noisy and zero distraction github client powered by github apis</h6>
 </p>
+
+<samp>
+        <h2 align="center">gitsy</h2>
+        <h6 align="center"> anti noisy and zero distraction github client powered by github apis</h6>
+</samp>
 
 ### Prerequisites
 
