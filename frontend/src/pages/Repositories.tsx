@@ -7,8 +7,10 @@ import { useEffect, useState } from "react";
 import { formatDistanceToNow } from 'date-fns';
 import { Button } from "@/components/atoms/button";
 import { Input } from "@/components/atoms/input";
+import { useToast } from '@hanseo0507/react-toast'
 
 const Repositories = () => {
+    const { toast } = useToast();
     const [repositories, setRepositories] = useState<Repository[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>('');
@@ -43,6 +45,7 @@ const Repositories = () => {
                 setHasNextPage(hasNextPage);
             } catch (error) {
                 setError('Failed to fetch repositories');
+                toast.error('Failed to fetch repositories');
             } finally {
                 setIsLoading(false);
             }
