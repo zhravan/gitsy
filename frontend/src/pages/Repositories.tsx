@@ -117,7 +117,7 @@ const Repositories = () => {
                             type="text"
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
-                            placeholder="Filter repositories..."
+                            placeholder="Search ..."
                             className="w-64"
                         />
                     </form>
