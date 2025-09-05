@@ -10,7 +10,7 @@ import githubService from "@/lib/github-service";
 
 
 export const AuthForm = ({ onSuccess }: { onSuccess: () => void }) => {
-
+    console.log("AuthForm", onSuccess);
     const [token, setToken] = useState<string>("");
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>('');
